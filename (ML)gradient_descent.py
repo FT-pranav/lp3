@@ -1,42 +1,15 @@
-import numpy as np
-import matplotlib.pyplot as plt
-
-def f(x):
-    return (x+3)** 2
-
-def df(x):
-    return 2*(x+3)
-
-def gradient_descent(initial_x,learning_rate, num_iterations):
-    x = initial_x
-    x_history = [x]
-    
-    for i in range(num_iterations):
-        gradient = df(x)
-        x = x - learning_rate*gradient 
-        x_history.append(x)
-
-    return x, x_history
-
-initial_x = 0
-learning_rate = 0.1
-num_iterations = 50
-
-
-x, x_history = gradient_descent (initial_x, learning_rate, num_iterations)
-
-print("Local minimum: {:.2f}".format(x))
-
-
-x_vals = np.linspace (-10, 4, 100)
-
-
-plt.xlabel('x')
-
-plt.ylabel('f(x)')
-
-plt.title('Gradient Descent')
-
-
-
-plt.show()
+#Initialize Parameters
+cur_x = 2
+rate = 0.01
+precision = 0.000001
+previous_step_size = 1
+max_iters = 1000
+iters = 0
+df = lambda x : 2 * (x + 3) #Gradient of our function i.e (x + 3)²
+#Run a loop to perform gradient Descent
+while previous_step_size > precision and iters < max_iters:
+    prev_x = cur_x
+    cur_x -= rate * df(prev_x)
+    previous_step_size = abs(prev_x - cur_x)
+    iters += 1
+print("Local Minima Occurs at :",cur_x)
