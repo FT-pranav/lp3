@@ -1,38 +1,35 @@
-pragma solidity >= 0.7.0;
-// Write  a  smart  contract  on  a  test  network,  for  Bank  account  of  a  customer  for
-  // following operations: Deposit money | Withdraw Money | Show balance
-contract Bank{
-    mapping(address => uint) public user_account;
-    mapping(address => bool) public user_exist;
+// SPDX-License-Identifier: Unlicensed
+pragma solidity ^0.8.1;
 
-    function create_account() public payable returns(string memory){
-        require(user_exist[msg.sender] == false, "Account Already created!");
-        user_account[msg.sender] = msg.value;
-        user_exist[msg.sender] = true;
-        return "Account created";
+contract MyBank {
+    mapping(address => uint) private _balances;
+    address public owner;
+    event LogDepositMade(address accountHolder, uint amount);
+
+    constructor() {
+        owner = msg.sender;
+        emit LogDepositMade(msg.sender, 1000);
     }
 
-    function deposit(uint amount) public payable returns(string memory){
-        require(user_exist[msg.sender] == true, "Account not created!");
-        require(amount > 0, "Amount should be greater than 0");
-        user_account[msg.sender] += amount;
-        return "Amount deposisted sucessfully";
+    function deposit() public payable returns (uint) {
+        require((_balances[msg.sender] + msg.value) > _balances[msg.sender] && msg.sender != address(0));
+
+        _balances[msg.sender] += msg.value;
+        emit LogDepositMade(msg.sender, msg.value);
+        return _balances[msg.sender];
     }
 
-    function withdraw(uint amount) public payable returns(string memory){
-        require(user_exist[msg.sender] == true, "Account not created!");
-        require(amount > 0, "Amount should be greater than 0");
-        require(user_account[msg.sender] >= amount, "Amount is greater than money deposisted");
-        user_account[msg.sender] -= amount;
-        return "Amount withdrawn sucessfully";    
+    function withdraw(uint withdrawAmount) public returns (uint) {
+        require(_balances[msg.sender] >= withdrawAmount);
+        require(msg.sender != address(0));
+        require(_balances[msg.sender] > 0);
+        _balances[msg.sender] -= withdrawAmount;
+        payable(msg.sender).transfer(withdrawAmount);
+        emit LogDepositMade(msg.sender, withdrawAmount);
+        return _balances[msg.sender];
     }
 
-    function account_balance() public view returns(uint){
-        return user_account[msg.sender];
+    function viewBalance() public view returns (uint) {
+        return _balances[msg.sender];
     }
-    
-    function account_exists() public view returns(bool){
-        return user_exist[msg.sender];
-    }
-
 }
