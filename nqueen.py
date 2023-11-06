@@ -34,7 +34,7 @@ def print_board(board):
         print(" ".join(["Q" if cell == 1 else "." for cell in row]))
 
 def main():
-    board_size = 4
+    board_size = 8
     board = [[0 for _ in range(board_size)] for _ in range(board_size)]
 
     if solve_n_queens(board, 0):
