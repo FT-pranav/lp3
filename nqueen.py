@@ -1,49 +1,47 @@
-def n_queens(n):
-     col = set()
-     posDiag=set() # (r+c)
-     negDiag=set() # (r-c)
-     res=[]
-     
-     board = [["0"]*n for i in range(n)]
-     def backtrack(r):
-        if r==n:
-           copy = [" ".join(row) for row in board]
-           res.append(copy)
-           return
-        for c in range(n):
-            if c in col or (r+c) in posDiag or (r-c) in negDiag:
-                continue
-               
-            col.add(c)
-            posDiag.add(r+c)
-            negDiag.add(r-c) 
-            board[r][c]="1"
-            
-            backtrack(r+1)    
-            
-            col.remove(c)
-            posDiag.remove(r+c)
-            negDiag.remove(r-c)
-            board[r][c]="0"   
-     backtrack(0)
-     for sol in res:
+def is_safe(board, row, col):
+    # Check the left side of the current row
+    for i in range(col):
+        if board[row][i] == 1:
+            return False
 
-   
-         for row in sol:
-                print(row)
-         print()      
-   
+    # Check upper diagonal on the left side
+    for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
+        if board[i][j] == 1:
+            return False
 
-if __name__=="__main__": 
-      n_queens(4) 
-  
-              
+    # Check lower diagonal on the left side
+    for i, j in zip(range(row, len(board), 1), range(col, -1, -1)):
+        if board[i][j] == 1:
+            return False
 
+    return True
 
-      
+def solve_n_queens(board, col):
+    if col >= len(board):
+        return True
 
-    
+    for i in range(len(board)):
+        if is_safe(board, i, col):
+            board[i][col] = 1
+            if solve_n_queens(board, col + 1):
+                return True
+            board[i][col] = 0
 
+    return False
 
+def print_board(board):
+    for row in board:
+        print(" ".join(["Q" if cell == 1 else "." for cell in row]))
 
+def main():
+    board_size = 4
+    board = [[0 for _ in range(board_size)] for _ in range(board_size)]
 
+    if solve_n_queens(board, 0):
+        print("Solution found:")
+        print_board(board)
+    else:
+        print("No solution exists.")
+
+if __name__ == "__main__":
+    main()
